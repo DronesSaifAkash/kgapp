@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\State;
 use App\Models\Child; 
 use App\Models\Country;
+use Illuminate\Validation\ValidationException;
 
 class RegistrationController extends Controller
 {
@@ -14,6 +15,17 @@ class RegistrationController extends Controller
     public function registerChildForm(){
         $countries = Country::all();
         return view('registration.form', compact('countries'));
+    }
+
+    protected function validateImageDimensions($image)
+    {
+        $imageDimensions = getimagesize($image);
+        // dd($imageDimensions, $imageDimensions[0] < 100 || $imageDimensions[1] < 100);
+        if ($imageDimensions[0] < 100 || $imageDimensions[1] < 100) {
+            throw ValidationException::withMessages([
+                'photo' => 'The photo must be at least 100x100 pixels.',
+            ]);
+        }
     }
 
     public function registerForm_submit(Request $request){
@@ -30,7 +42,10 @@ class RegistrationController extends Controller
             'photo' => 'required|image|mimes:jpg,jpeg,png|max:1024',
         ], [
             'photo.max' => 'The photo must not exceed 1 MB.', 
+            'photo.dimensions' => 'The photo must be at least 100x100 pixels.',
         ]);
+
+        $this->validateImageDimensions($request->file('photo'));
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();

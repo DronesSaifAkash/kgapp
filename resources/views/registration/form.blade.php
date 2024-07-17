@@ -21,7 +21,7 @@
             <label for="class" class="block text-gray-700 text-sm font-bold mb-2">Class</label>
             <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="class" name="class" required>
                 @for($i = 1; $i <= 12; $i++)
-                    <option value="Class {{ $i }}">Class {{ $i }}</option>
+                    <option value="{{ $i }}">Class {{ numberToRoman($i) }}</option>
                 @endfor
             </select>
             @error('class') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror

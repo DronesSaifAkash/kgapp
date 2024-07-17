@@ -26,7 +26,7 @@
             <tr>
                 <td class="py-2 px-4 border-b">{{ $child->name }}</td>
                 <td class="py-2 px-4 border-b">{{ $child->date_of_birth }}</td>
-                <td class="py-2 px-4 border-b">{{ $child->class }}</td>
+                <td class="py-2 px-4 border-b">Class {{ numberToRoman($child->class) }}</td>
                 <td class="py-2 px-4 border-b">{{ $child->city }}</td>
                 <td class="py-2 px-4 border-b">
                     <a href="{{ route('child.details', $child->id) }}" class="text-blue-500">View Details</a>

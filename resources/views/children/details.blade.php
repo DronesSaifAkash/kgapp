@@ -8,7 +8,7 @@
     <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <p><strong>Name:</strong> {{ $child->name }}</p>
         <p><strong>Date of Birth:</strong> {{ $child->dob }}</p>
-        <p><strong>Class:</strong> {{ $child->class }}</p>
+        <p><strong>Class:</strong> Class {{ numberToRoman($child->class) }}</p>
         <p><strong>Address:</strong> {{ $child->address }}</p>
         <p><strong>City:</strong> {{ $child->city }}</p>
         <p><strong>State:</strong> {{ getStateName($child->state) }}</p>
