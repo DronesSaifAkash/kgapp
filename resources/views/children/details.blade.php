@@ -4,7 +4,7 @@
     <div class="container mx-auto p-8">
         <div class="flex items-center justify-between mb-4 mx-3 pt-4">
             <h2 class="text-2xl font-bold mb-6">Child Details</h2>
-            <a href="{{ route('children_edit', $child->id) }}" type="button" id="more"
+            <a href="{{ route('children_edit', $child->id) }}" type="button" id="update"
                 class="bg-blue-500 text-white py-1 px-3 rounded">Update Children</a>
         </div>
         @if (session('success'))
@@ -25,8 +25,7 @@
             <p><strong>State:</strong> {{ getStateName($child->state) }}</p>
             <p><strong>Country:</strong> {{ getCountryName($child->country) }}</p>
             <p><strong>Zip Code:</strong> {{ $child->zip_code }}</p>
-            <img src="{{ asset('kgapp/storage/app/public') . '/' . $child->photo_path }}" width="250px" alt="Child Photo"
-                class="mt-4" />
+            <img src="{{ asset('storage/' . $child->photo_path) }}" width="250px" alt="Child Photo" class="mt-4" />
 
             <h3 class="text-xl font-bold mt-6 mb-4">Pickup Persons</h3>
             <form method="POST" action="{{ route('update_pickup_persons', $child->id) }}">
@@ -107,23 +106,19 @@
         document.addEventListener('click', function(event) {
             if (event.target.classList.contains('remove-pickup-person')) {
                 const pickupPersons = document.querySelectorAll('.pickup-person');
-                if (pickupPersons.length > 1) {
-                    event.target.closest('.pickup-person').remove();
-                    count--;
-                } else {
-                    alert('At least one pickup person must be present.');
-                }
-            }
-        });
-
-        document.addEventListener('click', function(event) {
-            if (event.target.classList.contains('remove-pickup-person')) {
                 const pickupPersonDiv = event.target.closest('.pickup-person');
                 const pickupPersonId = pickupPersonDiv.dataset.id;
+
+                if (pickupPersons.length <= 1) {
+                    alert('At least one pickup person must be present.');
+                    return;
+                }
 
                 if (!confirm('Are you sure you want to delete this pickup person?')) {
                     return;
                 }
+                pickupPersonDiv.remove();
+                count--;
 
                 fetch(`{{ url('/pickup-persons/') }}/${pickupPersonId}`, {
                         method: 'DELETE',
@@ -133,26 +128,27 @@
                             'Accept': 'application/json'
                         }
                     })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Failed to delete pickup person.');
-                        }
-                        return response.json();
-                    })
+                    .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            pickupPersonElement.remove();
                             alert('Pickup person deleted successfully.');
                         } else {
                             alert(data.message);
+                            document.getElementById('pickup-persons').appendChild(pickupPersonDiv);
+                            count++;
+                            location.reload();
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Failed to delete pickup person.');
+                        document.getElementById('pickup-persons').appendChild(pickupPersonDiv);
+                        count++;
                     });
             }
         });
+
+
+
 
         document.addEventListener('DOMContentLoaded', function() {
 

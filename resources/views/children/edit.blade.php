@@ -147,7 +147,7 @@
                         <span class="text-red-500 text-xs">{{ $message }}</span>
                     @enderror
                     @if ($child->photo_path)
-                        <img src="{{ asset('kgapp/storage/app/public') . '/' . $child->photo_path }}" width="250px"
+                        <img src="{{ asset('storage/' . $child->photo_path) }}" width="250px"
                             alt="Child Photo" class="mt-4" />
                     @endif
                 </div>
