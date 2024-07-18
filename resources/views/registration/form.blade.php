@@ -70,6 +70,30 @@
             @error('photo') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
         </div>
 
+        <!-- Picked-up Person Details -->
+        <div class="flex items-center justify-between mb-4 mx-3 pt-4">
+            <h3 class="text-xl font-bold">Picked-up Person Details</h3>
+            <button type="button" id="add-more" class="bg-blue-500 text-white py-1 px-3 rounded">Add More</button>
+        </div>
+         <div id="picked-up-persons" class="mb-4">
+             <div class="picked-up-person mb-4 flex space-x-2">
+                 <input type="text" name="pickup_persons[0][name]" placeholder="Name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                 <select name="pickup_persons[0][relation]" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                     <option value="Father">Father</option>
+                     <option value="Mother">Mother</option>
+                     <option value="Brother">Brother</option>
+                     <option value="Sister">Sister</option>
+                     <option value="Grand Father">Grand Father</option>
+                     <option value="Grand Mother">Grand Mother</option>
+                 </select>
+                 <input type="text" name="pickup_persons[0][contact_number]" placeholder="Contact No" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" pattern="\d{10}" required>
+                 <button type="button" class="remove-pickup-person bg-red-500 text-white px-4 py-2 rounded" onclick="removeRow(this)">Remove</button>
+             </div>
+         </div>
+         
+ 
+
+
         <div class="flex items-center justify-between">
             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 Register
@@ -102,5 +126,43 @@
                 }
             });
         });
+    </script>
+
+
+<script>
+    document.getElementById('add-more').addEventListener('click', function () {
+    let pickedUpPersons = document.getElementById('picked-up-persons');
+    let count = pickedUpPersons.children.length;
+    if (count < 6) {
+        let newRow = document.createElement('div');
+        newRow.classList.add('picked-up-person', 'mb-4', 'flex', 'space-x-2');
+        newRow.innerHTML = `
+            <input type="text" name="pickup_persons[${count}][name]" placeholder="Name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            <select name="pickup_persons[${count}][relation]" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                <option value="Father">Father</option>
+                <option value="Mother">Mother</option>
+                <option value="Brother">Brother</option>
+                <option value="Sister">Sister</option>
+                <option value="Grand Father">Grand Father</option>
+                <option value="Grand Mother">Grand Mother</option>
+            </select>
+            <input type="text" name="pickup_persons[${count}][contact_number]" placeholder="Contact No" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" pattern="\\d{10}" required>
+            <button type="button" class="remove-pickup-person bg-red-500 text-white px-4 py-2 rounded" onclick="removeRow(this)">Remove</button>
+        `;
+        pickedUpPersons.appendChild(newRow);
+    } else {
+        alert('You can only add up to 6 picked-up persons.');
+    }
+});
+
+    function removeRow(button) {
+        let pickedUpPersons = document.getElementById('picked-up-persons');
+        if (pickedUpPersons.children.length > 1) {
+            let pickedUpPerson = button.parentNode;
+            pickedUpPersons.removeChild(pickedUpPerson);
+        } else {
+            alert('At least one picked-up person must be present.');
+        }
+    }
     </script>
 @endsection

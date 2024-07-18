@@ -20,7 +20,7 @@ class RegistrationController extends Controller
     protected function validateImageDimensions($image)
     {
         $imageDimensions = getimagesize($image);
-        // dd($imageDimensions, $imageDimensions[0] < 100 || $imageDimensions[1] < 100);
+        
         if ($imageDimensions[0] < 100 || $imageDimensions[1] < 100) {
             throw ValidationException::withMessages([
                 'photo' => 'The photo must be at least 100x100 pixels.',
@@ -29,7 +29,7 @@ class RegistrationController extends Controller
     }
 
     public function registerForm_submit(Request $request){
-        // dd($request);
+        
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'date_of_birth' => 'required|date|before:today',
@@ -40,9 +40,15 @@ class RegistrationController extends Controller
             'city' => 'required|string|max:255',
             'zip_code' => 'required|digits:7',
             'photo' => 'required|image|mimes:jpg,jpeg,png|max:1024',
+            'pickup_persons' => 'required|array|min:1|max:6',
+            'pickup_persons.*.name' => 'required|string|max:255',
+            'pickup_persons.*.relation' => 'required|string|in:Father,Mother,Brother,Sister,Grand Father,Grand Mother',
+            'pickup_persons.*.contact_number' => 'required|digits:10',
         ], [
             'photo.max' => 'The photo must not exceed 1 MB.', 
             'photo.dimensions' => 'The photo must be at least 100x100 pixels.',
+            'zip_code.digits' => 'The zip code must be exactly 7 digits.',
+            'pickup_persons.*.contact_number.digits' => 'The contact number must be exactly 10 digits.',
         ]);
 
         $this->validateImageDimensions($request->file('photo'));
@@ -57,21 +63,19 @@ class RegistrationController extends Controller
         $child->class = $request->class;
         $child->address = $request->address;
         $child->city = $request->city;
-        $child->zip_code = $request->zip_code;
-        
+        $child->zip_code = $request->zip_code;        
+        $child->country = $request->country;
+        $child->state = $request->state;
         if ($request->hasFile('photo')) {
             $child->photo_path = $request->file('photo')->store('photos', 'public'); 
         }
-
-        $child->country = $request->country;
-        $child->state = $request->state;
         $child->save();
 
-        return redirect()->route('registration.thankyou')->with('success', 'Registration successful!');
-    }
+        foreach ($request->input('pickup_persons') as $pickedUpPersonData) {
+            $child->pickedUpPersons()->create($pickedUpPersonData);
+        }
 
-    public function showThankYou(){
-        return view('registration.thankyou');
+        return redirect()->route('child.details', $child->id)->with('success','Thank you for registering. Here are the details you provided: ');
     }
 
 

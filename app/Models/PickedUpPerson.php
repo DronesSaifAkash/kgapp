@@ -11,7 +11,7 @@ class PickedUpPerson extends Model
     protected $table = 'picked_up_people';
 
     protected $fillable = [
-        'child_id', 'name', 'relation', 'contact_no',
+       'id', 'child_id', 'name', 'relation', 'contact_number',
     ];
 
     public function child()
